@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "fauna": "yarn fauna-gql"
+  },
+  "dependencies": {
+    "fauna-gql-upload": "^1.5.1",
+    "faunadb": "^2.14.2"
+  }
+}

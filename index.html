@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Email</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh">
+
+<script>
+  const API_KEY = 'fnADw-W6VcACBlVWcIIkfoTZqYoWEf8A2ZLx58_f';
+
+  const getEmailValue = () => document.getElementById('email').value;
+
+  const request = async (email, unsubscribe = false) => {
+    const headers = new Headers();
+
+    headers.append('Authorization', `Bearer ${API_KEY}`);
+    headers.append('Content-Type', 'application/json');
+
+    subQuery = 'mutation Subscribe($email: String!) {\n  subscribe(email: $email)\n}';
+    unsubQuery = 'mutation Unsubscribe($email: String!) {\n  unsubscribe(email: $email)\n}';
+
+    return fetch('https://graphql.fauna.com/graphql', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        query: unsubscribe ? unsubQuery : subQuery,
+        variables: { 'email': email }
+      }),
+    })
+      .then(response => response.json());
+  };
+
+  const subscribe = async () => {
+    const res = await request(getEmailValue());
+
+    try {
+      if (res.data.subscribe) {
+        alert('Subscribed!');
+      }
+    } catch (e) {
+      alert('Email has already subscribed');
+    }
+  };
+
+  const unsubscribe = async () => {
+    const res = await request(getEmailValue(), true);
+
+    try {
+      if (res.data.unsubscribe) {
+        alert('Unsubscribed!');
+      }
+    } catch (e) {
+      alert('Email does not exist on mailing list');
+    }
+  };
+</script>
+
+<div>
+  <div style="margin-bottom: 1em">
+    <div class="form-group">
+      <label for="email">Email address</label>
+      <input type="email" class="form-control" id="email" autocomplete="email">
+    </div>
+    <button type="button" class="btn btn-primary" onclick="subscribe()">Subscribe</button>
+    <button type="button" class="btn btn-link" onclick="unsubscribe()">Unsubscribe</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById('email').value = `hi@${Math.random().toString(16).substr(3, 3)}.com`;
+</script>
+
+</body>
+</html>
