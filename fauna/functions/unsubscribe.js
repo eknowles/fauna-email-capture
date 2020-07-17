@@ -7,7 +7,7 @@ module.exports = {
   role: 'admin',
   body: Query(
     Lambda(
-      'email',
+      ['email'],
       IsDoc(
         Delete(
           Select(
